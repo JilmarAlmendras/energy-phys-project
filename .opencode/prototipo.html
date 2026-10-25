@@ -1,0 +1,1342 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fisiocenter — Prototipo de la plataforma</title>
+  <style>
+   :root{
+     /* Paleta basada en referencia.png: base clara + azul marino + celeste */
+     --bg:#f7f8fa;
+     --fg:#0c1420;
+     --fg-soft:#475569;
+     --muted:#64748b;
+     --muted-fg:#94a3b8;
+     --card:#ffffff;
+     --card-foreground:#0c1420;
+     --popover:#ffffff;
+     --popover-foreground:#0c1420;
+     --primary:#285878;
+     --primary-foreground:#ffffff;
+     --primary-hover:#1f4560;
+     --secondary:#f1f4f7;
+     --secondary-foreground:#0c1420;
+     --accent:#eef2f6;
+     --accent-foreground:#0c1420;
+     --destructive:#dc2626;
+     --destructive-foreground:#ffffff;
+     --success:#2f9e44;
+     --warning:#d98324;
+     --border:#e8ebef;
+     --input:#e8ebef;
+     --ring:#28a8e8;
+     --ring-wash:rgba(40,168,232,.15);
+     --radius:0.625rem;
+
+     --ink:#0c1420;
+     --ink-soft:#475569;
+     --muted:#64748b;
+     --paper:#f7f8fa;
+     --paper-deep:#f1f4f7;
+     --surface:#ffffff;
+     --line:#e8ebef;
+     --line-strong:#cfd6de;
+     --accent:#eef2f6;
+     --accent-deep:#e2e8ee;
+     --accent-wash:rgba(40,88,120,.06);
+     --amber:#d98324;
+     --amber-wash:rgba(217,131,36,.08);
+     --danger:#dc2626;
+     --danger-wash:rgba(220,38,38,.08);
+     --success:#2f9e44;
+     --success-wash:rgba(47,158,68,.08);
+     /* Sidebar y navbar: claros, con acento azul marino */
+     --sidebar-bg:#ffffff;
+     --sidebar-bg-2:#ffffff;
+     --sidebar-fg:#0c1420;
+     --sidebar-fg-soft:#475569;
+     --sidebar-muted:#94a3b8;
+     --sidebar-border:#eceef1;
+     --sidebar-active:#eef4fb;
+     --sidebar-active-fg:#285878;
+     --sidebar-accent:#285878;
+
+     --serif:ui-serif, Georgia, Cambria, "Times New Roman", serif;
+     --sans:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+     --mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+     --fs-hero:clamp(2.5rem,5.2vw,4.25rem);
+     --fs-h2:clamp(1.6rem,2.7vw,2.4rem);
+     --fs-h3:1.28rem;
+     --fs-body:1rem;
+     --fs-sm:.875rem;
+     --fs-xs:.75rem;
+
+     --r-sm:.5rem; --r-md:.625rem; --r-lg:.75rem; --r-xl:1rem;
+     --sh-1:0 1px 2px 0 rgba(15,23,42,.05);
+     --sh-2:0 1px 3px 0 rgba(15,23,42,.08),0 1px 2px -1px rgba(15,23,42,.08);
+     --sh-3:0 10px 40px -10px rgba(15,23,42,.15);
+     --tr:150ms cubic-bezier(.4,0,.2,1);
+   }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+     font-family:var(--sans);
+     color:var(--fg);
+     background:var(--bg);
+     -webkit-font-smoothing:antialiased;
+     -moz-osx-font-smoothing:grayscale;
+     line-height:1.6;
+   }
+  ::selection{background:var(--accent);color:#fff}
+  a{color:var(--accent)}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:3px}
+
+  /* ---------- Shell ---------- */
+  .topbar{
+     position:sticky;top:0;z-index:40;
+     display:flex;align-items:center;gap:16px;
+     padding:10px 1.25rem;
+     background:#fff;
+     color:var(--fg);
+     border-bottom:1px solid var(--border);
+   }
+   .brand{display:flex;align-items:center;gap:12px;min-width:0}
+   .brand-mark{
+     width:34px;height:34px;border-radius:calc(var(--radius) - 4px);flex:none;
+     background:var(--primary);
+     display:grid;place-items:center;color:#fff;font-weight:600;font-size:14px;
+   }
+   .brand-name{font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+   .brand-name small{display:block;font-weight:500;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-fg);margin-top:1px}
+  .tabs{display:flex;gap:6px;padding:4px;border-radius:calc(var(--radius) - 2px);margin-left:6px}
+  .tab{
+     border:0;background:transparent;color:var(--fg-soft);font-size:var(--fs-sm);font-weight:500;
+     padding:6px 12px;border-radius:calc(var(--radius) - 4px);transition:var(--tr);
+   }
+  .tab:hover{color:var(--fg);background:var(--accent)}
+  .tab[aria-current="true"]{color:var(--primary);background:rgba(40,88,120,.08);font-weight:500}
+   .top-search{
+     display:flex;align-items:center;gap:8px;flex:1;max-width:340px;
+     border:1px solid var(--border);border-radius:9999px;padding:7px 14px;color:var(--muted-fg);
+     background:#fff;transition:var(--tr);
+   }
+   .top-search:focus-within{border-color:var(--ring);box-shadow:0 0 0 2px var(--ring-wash);color:var(--fg-soft)}
+   .top-search input{border:0;outline:none;background:transparent;font:inherit;font-size:var(--fs-sm);width:100%;color:var(--fg)}
+   .top-search input::placeholder{color:var(--muted-fg)}
+   .role-chip{
+     display:flex;align-items:center;gap:8px;font-size:var(--fs-xs);color:var(--muted-fg);white-space:nowrap;
+     border:1px solid var(--border);background:#fff;border-radius:9999px;padding:5px 10px 5px 6px;cursor:pointer;transition:var(--tr);
+   }
+   .role-chip:hover{background:var(--accent)}
+   .role-chip b{font-weight:500;font-size:var(--fs-sm);color:var(--fg)}
+   .role-chip svg{color:var(--muted-fg);flex:none}
+   .avatar-sm{
+     width:26px;height:26px;border-radius:9999px;display:grid;place-items:center;
+     background:var(--primary);color:#fff;font-size:10px;font-weight:600;flex:none;
+   }
+   .top-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+   .top-icon{
+     position:relative;width:36px;height:36px;border-radius:9999px;border:1px solid var(--border);
+     background:#fff;color:var(--fg-soft);display:grid;place-items:center;transition:var(--tr);
+   }
+   .top-icon:hover{background:var(--accent);color:var(--fg)}
+   .dot-badge{position:absolute;top:7px;right:8px;width:7px;height:7px;border-radius:9999px;background:#ef4444;border:1.5px solid #fff}
+   @media(max-width:1080px){.top-search{display:none}}
+  .role-chip .hint{max-width:150px;line-height:1.25}
+
+  .sheet{padding:24px clamp(16px,4vw,36px) 64px;max-width:1280px;margin:0 auto}
+  .page{display:none}
+  .page[aria-hidden="false"]{display:block;animation:rev .28s cubic-bezier(.2,.7,.3,1)}
+  @keyframes rev{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ---------- Shared bits ---------- */
+  .eyebrow{
+     font-size:var(--fs-xs);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--primary);
+   }
+   .h1{font-weight:600;line-height:1.15;letter-spacing:-.03em;margin:8px 0 12px;font-size:clamp(2rem,5vw,3.5rem)}
+   .h2{font-weight:600;line-height:1.2;margin:0 0 6px;font-size:clamp(1.5rem,2.5vw,2rem)}
+   .lead{color:var(--fg-soft);font-size:clamp(1rem,1.4vw,1.125rem);max-width:65ch;line-height:1.7}
+  .muted{color:var(--muted)}
+  .demo-tag{
+     display:inline-block;font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+     color:var(--muted-fg);background:#fff;border:1px solid var(--border);
+     padding:3px 10px;border-radius:9999px;
+   }
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--sh-1)}
+  .btn{
+     display:inline-flex;align-items:center;gap:8px;justify-content:center;
+     border:1px solid transparent;border-radius:calc(var(--radius) - 2px);padding:8px 16px;
+     font-size:var(--fs-sm);font-weight:500;transition:var(--tr);text-decoration:none;
+     line-height:1.5;
+   }
+   .btn-primary{background:var(--primary);color:var(--primary-foreground);box-shadow:var(--sh-1)}
+   .btn-primary:hover{background:var(--primary-hover)}
+   .btn-ghost{background:transparent;color:var(--fg);border-color:var(--border)}
+   .btn-ghost:hover{background:var(--accent)}
+   .btn[disabled]{opacity:.5;cursor:not-allowed}
+   .icon-btn{
+     width:40px;height:40px;border-radius:calc(var(--radius) - 2px);border:1px solid var(--border);
+     background:var(--card);color:var(--fg-soft);font-size:16px;display:inline-grid;place-items:center;transition:var(--tr);
+   }
+   .icon-btn:hover{color:var(--primary);border-color:var(--primary);background:var(--accent)}
+   .field{display:flex;flex-direction:column;gap:6px}
+   .field label{font-size:var(--fs-sm);font-weight:500}
+   .input,.select,.textarea{
+     border:1px solid var(--input);border-radius:calc(var(--radius) - 2px);padding:8px 12px;font:inherit;font-size:var(--fs-sm);
+     background:var(--card);color:var(--fg);transition:var(--tr);
+   }
+   .input:focus,.select:focus,.textarea:focus{outline:none;border-color:var(--ring);box-shadow:0 0 0 2px var(--ring-wash)}
+  .textarea{resize:vertical;min-height:120px}
+
+  /* ---------- Flow page ---------- */
+  .flow-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:start}
+  @media(max-width:960px){.flow-grid{grid-template-columns:1fr}}
+   .diagram{
+     padding:22px;border-radius:var(--radius);
+     background:var(--card);border:1px solid var(--border);
+     color:var(--fg);box-shadow:var(--sh-2);
+   }
+   .diagram h3{color:var(--fg);margin:0 0 4px;font-weight:600}
+   .diagram .sub{color:var(--muted);font-size:var(--fs-sm);margin-bottom:18px}
+   .flow-col{display:flex;flex-direction:column;gap:10px}
+   .f-node{
+     border:1px solid var(--border);background:var(--secondary);border-radius:calc(var(--radius) - 2px);padding:12px 14px;
+     font-size:var(--fs-sm);display:flex;gap:12px;align-items:flex-start;
+   }
+   .f-node .dot{flex:none;width:26px;height:26px;border-radius:calc(var(--radius) - 4px);display:grid;place-items:center;font-size:12px;font-weight:600}
+   .dot.cli{background:var(--primary);color:var(--primary-foreground)}
+   .dot.adm{background:var(--warning);color:var(--primary-foreground)}
+   .f-node b{display:block;font-size:var(--fs-sm);color:var(--fg);font-weight:500}
+   .f-node .d{color:var(--muted);font-size:var(--fs-xs)}
+   .f-link{align-self:center;height:26px;width:1px;background:var(--border);position:relative;margin-left:19px}
+   .f-link:after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);border:4px solid transparent;border-bottom-color:var(--border);top:auto}
+   .f-link:before{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--border)}
+  .flow-lanes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:560px){.flow-lanes{grid-template-columns:1fr}}
+  .lane-label{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-fg);margin-bottom:6px}
+
+  .audit{display:grid;gap:12px}
+  .audit-item{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:14px 16px}
+  .audit-item .sev{
+    font-size:10px;font-weight:800;letter-spacing:.06em;border-radius:7px;padding:5px 9px;height:fit-content;white-space:nowrap;
+  }
+  .sev.medium{background:var(--amber-wash);color:var(--amber)}
+  .sev.high{background:var(--danger-wash);color:var(--danger)}
+  .sev.low{background:var(--accent-wash);color:var(--accent)}
+  .audit-item h4{margin:0;font-size:var(--fs-sm)}
+  .audit-item p{margin:4px 0 0;font-size:var(--fs-sm);color:var(--ink-soft)}
+  .audit-item .fix{font-size:var(--fs-xs);color:var(--muted);margin-top:6px}
+  .audit-item .fix b{color:var(--ink-soft)}
+
+  /* ---------- Landing / client site ---------- */
+  .site{
+     background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--sh-2);
+   }
+   .site-nav{
+     display:flex;align-items:center;gap:26px;padding:1rem 2rem;
+     border-bottom:1px solid var(--border);background:rgba(255,255,255,.9);backdrop-filter:saturate(180%) blur(10px);position:sticky;top:0;z-index:5;
+   }
+   .site-nav .links{display:flex;gap:1.5rem;margin:0 auto}
+   .site-nav .links a{color:var(--fg-soft);text-decoration:none;font-size:var(--fs-sm);font-weight:500}
+   .site-nav .links a:hover{color:var(--fg)}
+  .site-nav .brand-name{color:var(--ink)}
+  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;padding:clamp(40px,6vw,80px) 44px}
+  @media(max-width:860px){.hero{grid-template-columns:1fr;padding:28px}}
+  .hero h1{margin:10px 0 14px}
+  .hero .stats{display:flex;gap:22px;margin-top:26px;flex-wrap:wrap}
+  .hero .stat b{font-family:var(--serif);font-size:1.5rem;display:block}
+  .hero .stat span{font-size:var(--fs-xs);color:var(--muted)}
+  .views-badge{
+    display:inline-flex;align-items:center;gap:8px;font-size:var(--fs-xs);color:var(--muted);
+    border:1px dashed var(--line-strong);border-radius:999px;padding:4px 12px;margin-top:18px;
+  }
+  .hero-card{
+     background:var(--primary);border-radius:var(--radius);color:var(--primary-foreground);padding:1.5rem;box-shadow:var(--sh-3);position:relative;overflow:hidden;
+   }
+   .hero-card:before{content:"";position:absolute;inset:0;background:radial-gradient(70% 90% at 85% 10%,rgba(255,255,255,.15),transparent 60%)}
+   .hero-card .row{display:flex;align-items:center;gap:10px;margin-bottom:16px;position:relative}
+   .hero-card .dot{width:10px;height:10px;border-radius:50%;background:#34d399;box-shadow:0 0 0 4px rgba(52,211,153,.25)}
+   .session{border:1px solid rgba(255,255,255,.2);border-radius:calc(var(--radius) - 2px);padding:14px;position:relative;display:grid;gap:8px;background:rgba(255,255,255,.08)}
+   .session .bar{height:8px;border-radius:9999px;background:rgba(255,255,255,.15);overflow:hidden}
+   .session .bar i{display:block;height:100%;width:62%;background:linear-gradient(90deg,#34d399,#bbf7d0);border-radius:9999px}
+   .session .tags{display:flex;gap:8px;flex-wrap:wrap}
+   .session .tags span{font-size:10px;background:rgba(255,255,255,.15);border-radius:9999px;padding:3px 9px}
+  .services{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 44px 44px}
+  @media(max-width:860px){.services{grid-template-columns:1fr;padding:0 28px 28px}}
+  .service{padding:1.5rem}
+  .service .num{font-size:1.75rem;color:var(--primary);font-weight:600;letter-spacing:-.02em}
+  .socials{display:flex;gap:10px;align-items:center;justify-content:flex-end;padding:14px 34px;border-top:1px solid var(--line);background:rgba(255,255,255,.6)}
+  .socials span{font-size:var(--fs-xs);color:var(--muted);margin-right:auto}
+  .soc{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;background:#fff;color:var(--ink-soft);text-decoration:none;font-size:13px;font-weight:700}
+  .soc:hover{color:#fff;background:var(--accent);border-color:var(--accent)}
+
+  /* ---------- Admin ---------- */
+  .admin{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 56px);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:#fff;box-shadow:none}
+  @media(max-width:900px){.admin{grid-template-columns:1fr}}
+  .side{
+     background:var(--sidebar-bg);color:var(--sidebar-fg);padding:1rem .5rem;display:flex;flex-direction:column;gap:6px;border-right:1px solid var(--sidebar-border);
+   }
+   @media(max-width:900px){
+     .side{flex-direction:row;overflow-x:auto;gap:8px;padding:10px;border-radius:0;border-right:0;border-bottom:1px solid var(--border)}
+   }
+   .side-brand{display:flex;align-items:center;gap:10px;padding:6px 10px 14px;margin-bottom:4px;border-bottom:1px solid var(--sidebar-border)}
+   .side-logo{width:32px;height:32px;border-radius:calc(var(--radius) - 2px);background:var(--primary);color:#fff;display:grid;place-items:center;flex:none}
+   .side-brand-txt b{display:block;color:var(--sidebar-fg);font-size:var(--fs-sm);font-weight:600;letter-spacing:-.01em}
+   .side-brand-txt small{color:var(--sidebar-muted);font-size:10px;letter-spacing:.04em}
+   .side-foot{margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px 10px 6px;border-top:1px solid var(--sidebar-border)}
+   .side-foot-txt{flex:1;min-width:0}
+   .side-foot-txt b{display:block;color:var(--sidebar-fg);font-size:var(--fs-xs);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+   .side-foot-txt small{color:var(--sidebar-muted);font-size:10px}
+   .side-gear{background:transparent;border:0;color:var(--sidebar-muted);padding:6px;border-radius:calc(var(--radius) - 4px);display:grid;place-items:center;transition:var(--tr)}
+   .side-gear:hover{background:var(--accent);color:var(--sidebar-fg)}
+   .side .sec{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--sidebar-muted);padding:10px 12px 4px;font-weight:500}
+   @media(max-width:900px){
+     .side-brand,.side-foot{display:none}
+   }
+   .nav-item{
+     display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+     border:0;background:transparent;color:var(--sidebar-fg-soft);font-size:var(--fs-sm);font-weight:400;
+     padding:8px 12px;border-radius:calc(var(--radius) - 2px);transition:var(--tr);white-space:nowrap;
+   }
+   .nav-item:hover{background:var(--sidebar-active);color:var(--sidebar-active-fg)}
+   .nav-item[aria-current="true"]{background:var(--sidebar-active);color:var(--sidebar-active-fg)}
+   .nav-item .nav-ic{flex:none;color:var(--sidebar-muted);transition:var(--tr)}
+   .nav-item:hover .nav-ic{color:var(--sidebar-active-fg)}
+   .nav-item[aria-current="true"] .nav-ic{color:var(--sidebar-accent)}
+   .nav-item .k{font-family:var(--mono);font-size:11px;opacity:.5;display:none}
+   .nav-item .cnt{margin-left:auto;background:var(--accent);color:var(--muted);border-radius:9999px;font-size:10px;padding:1px 8px}
+   .nav-item[aria-current="true"] .cnt{background:rgba(40,88,120,.12);color:var(--primary)}
+   @media(max-width:900px){.nav-item{width:auto}}
+
+  .main{background:var(--bg);padding:1.25rem 1.5rem;min-width:0}
+  .main-head{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .main-head .t{flex:1;min-width:200px}
+  .main-head h2{font-size:1.375rem;margin:2px 0 0;font-weight:600;letter-spacing:-.01em}
+  .main-head .sub{color:var(--muted);font-size:var(--fs-xs)}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:16px}
+  .stat{padding:16px;position:relative}
+   .stat .lbl{font-size:var(--fs-xs);color:var(--muted-fg);font-weight:500;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.08em}
+   .stat .val{font-size:1.75rem;line-height:1.1;margin-top:6px;font-weight:600;letter-spacing:-.02em}
+   .stat .d{font-size:var(--fs-xs);color:var(--muted);margin-top:4px}
+   .stat .ic{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:calc(var(--radius) - 4px);display:grid;place-items:center;font-size:15px;background:var(--secondary);color:var(--fg-soft)}
+
+  .panel{padding:16px;margin-bottom:16px}
+  .panel-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+  .panel-head h3{font-size:var(--fs-body);margin:0;font-weight:600}
+  .panel-head .spacer{flex:1}
+
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:var(--fs-sm)}
+  th{text-align:left;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-fg);padding:8px 10px;border-bottom:1px solid var(--border);font-weight:500}
+  td{padding:11px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+  tr:last-child td{border-bottom:0}
+  tr.clickable{cursor:pointer;transition:var(--tr)}
+  tr.clickable:hover{background:var(--accent)}
+  .pill{font-size:10px;font-weight:500;padding:3px 9px;border-radius:9999px;white-space:nowrap}
+  .pill.ok{background:var(--success-wash);color:var(--success)}
+  .pill.warn{background:var(--amber-wash);color:var(--warning)}
+  .pill.bad{background:var(--danger-wash);color:var(--destructive)}
+  .pill.neu{background:var(--secondary);color:var(--fg-soft)}
+  .avatar{
+    width:34px;height:34px;border-radius:50%;display:inline-grid;place-items:center;font-size:12px;font-weight:700;color:#fff;background:var(--accent);flex:none;
+  }
+  .cell-user{display:flex;align-items:center;gap:10px}
+  .cell-user b{display:block;font-size:var(--fs-sm)}
+  .cell-user span{font-size:var(--fs-xs);color:var(--muted)}
+  .pager{display:flex;align-items:center;gap:12px;padding:12px 4px 0;font-size:var(--fs-xs);color:var(--muted)}
+  .pager .dots{display:flex;gap:6px;margin-left:auto}
+  .pager .dots i{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-style:normal;font-weight:600}
+  .pager .dots i.on{background:var(--accent);color:#fff}
+
+  /* calendar */
+   .cal{border:1px solid var(--border);border-radius:calc(var(--radius));overflow:hidden;background:#f4f6f8}
+  .cal-row{display:grid;grid-template-columns:64px repeat(7,1fr);border-bottom:1px solid var(--border)}
+  .cal-row:last-child{border-bottom:0}
+  .cal-head{display:grid;grid-template-columns:auto;align-items:center;justify-items:center;padding:12px 4px;background:var(--accent);border-bottom:1px solid var(--border)}
+  .cal-head b{font-size:var(--fs-xs);font-weight:500}
+  .cal-head span{font-size:10px;color:var(--muted-fg)}
+  .cal-head.today{background:var(--accent-wash)}
+  .cal-time{grid-column:1;padding:10px 8px;font-size:10px;color:var(--muted);font-family:var(--mono);border-right:1px solid var(--border)}
+  .cal-cell{border-left:1px solid var(--border);min-height:52px;padding:6px;display:flex;flex-direction:column;gap:6px;position:relative}
+  .cal-cell:first-child{border-left:0}
+   .apt{
+      display:block;border-left:3px solid var(--ev,var(--primary));border-radius:3px;
+      background:#fff;padding:5px 8px;box-shadow:0 1px 2px rgba(16,24,40,.06);text-align:left;
+    }
+   .apt b{display:block;font-size:var(--fs-xs);font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+   .apt time{font-size:10px;color:var(--muted);font-family:var(--mono)}
+   .apt.add{border:1px dashed var(--line-strong);border-left:1px dashed var(--line-strong);background:transparent;color:var(--muted);text-align:center;padding:6px 8px;font-size:var(--fs-xs)}
+   .apt.add:hover{background:rgba(255,255,255,.6);color:var(--ink-soft)}
+   .apt.ev-a{--ev:#285878}
+   .apt.ev-b{--ev:#2f9e44}
+   .apt.ev-c{--ev:#d98324}
+   .apt.ev-d{--ev:#28a8e8}
+   .cal-closed{display:grid;place-items:center;height:100%}
+   .cal-closed span{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;border:1px dashed var(--line-strong);padding:4px 8px;border-radius:8px}
+
+   /* upcoming appointments */
+   .uplist{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);overflow:hidden;margin-top:16px}
+   .uplist-head{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--accent);border-bottom:1px solid var(--border)}
+   .uplist-head h3{margin:0;font-size:var(--fs-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+   .uplist-head .spacer{flex:1}
+   .up-row{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);position:relative;cursor:pointer;transition:background .15s}
+   .up-row:hover{background:var(--accent-wash)}
+   .up-row:last-child{border-bottom:0}
+   .up-row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ev,var(--primary))}
+   .up-row .av{flex:none;width:32px;height:32px;border-radius:50%;background:var(--ev,var(--primary));color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600}
+   .up-row .who{min-width:0}
+   .up-row .who b{display:block;font-size:var(--fs-sm);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+   .up-row .who span{font-size:var(--fs-xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+   .up-row time{margin-left:auto;flex:none;font-family:var(--mono);font-size:var(--fs-xs);color:var(--ink-soft)}
+   .up-row .pro{flex:none;font-size:10px;font-weight:600;letter-spacing:.02em;padding:3px 8px;border-radius:9999px;background:var(--accent-deep);color:var(--ink-soft)}
+   .up-row.ev-a{--ev:#285878}
+   .up-row.ev-b{--ev:#2f9e44}
+   .up-row.ev-c{--ev:#d98324}
+   .up-row.ev-d{--ev:#28a8e8}
+
+  /* biblioteca */
+  .kv{display:grid;grid-template-columns:140px 1fr;gap:6px 14px;font-size:var(--fs-sm);padding:8px 0;border-bottom:1px dashed var(--line)}
+  .kv:last-child{border-bottom:0}
+  .kv dt{color:var(--muted);font-weight:600}
+  .kv dd{margin:0}
+  .doc-body{border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--paper);font-family:var(--serif);font-size:1.02rem;line-height:1.7;color:var(--ink)}
+  .doc-body h4{margin:0 0 8px;font-family:var(--serif)}
+  .doc-body .pg{width:100%;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--accent) 40%,var(--line) 40%);margin-bottom:14px}
+
+  /* chatbot admin */
+  .chat-demo{max-width:460px}
+  .bubble{border-radius:calc(var(--radius) - 2px);padding:9px 13px;font-size:var(--fs-sm);max-width:86%;margin-bottom:8px;box-shadow:var(--sh-1);border:1px solid var(--border)}
+  .bubble.bot{background:var(--card);border-bottom-left-radius:.375rem;margin-right:auto}
+  .bubble.user{background:var(--primary);color:var(--primary-foreground);border-bottom-right-radius:.375rem;margin-left:auto;border-color:transparent}
+  .bubble time{display:block;font-size:10px;opacity:.65;margin-top:3px}
+  .wa-toggle{display:flex;gap:8px;margin-top:10px}
+  .wa-toggle span{width:10px;height:10px;border-radius:50%;background:var(--success);box-shadow:0 0 0 3px var(--success-wash)}
+  .wa-toggle{font-size:var(--fs-xs);color:var(--muted);align-items:center}
+
+  /* perfil */
+  .profile-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .profile-head .avatar{width:56px;height:56px;font-size:20px}
+  .profile-head h3{margin:0;font-family:var(--serif);font-size:1.4rem}
+  .timeline{position:relative;margin-top:6px}
+  .timeline:before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:var(--line)}
+  .tl-item{display:grid;grid-template-columns:20px 1fr;gap:12px;padding:8px 0;position:relative}
+  .tl-item .pt{width:20px;height:20px;border-radius:50%;background:#fff;border:4px solid var(--accent);z-index:1}
+  .tl-item b{font-size:var(--fs-sm);display:block}
+  .tl-item span{font-size:var(--fs-xs);color:var(--muted)}
+
+  /* QR */
+  .qr-wrap{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+  .qr-box{
+    width:208px;height:208px;padding:14px;background:#fff;border:1px solid var(--line);
+    border-radius:16px;box-shadow:var(--sh-2);display:grid;grid-template-columns:repeat(21,1fr);grid-template-rows:repeat(21,1fr);
+  }
+  .qr-box i{background:var(--ink);border-radius:1px}
+  .qr-caption{flex:1;min-width:220px}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(47,125,82,.35)}50%{box-shadow:0 0 0 8px rgba(47,125,82,0)}}
+  .qr-pay{border:1px solid #BFD9CB;background:var(--success-wash);color:var(--success);border-radius:999px;padding:8px 16px;font-weight:700;font-size:var(--fs-sm);animation:pulse 2s infinite}
+
+  /* modal / whatsapp flow */
+  .modal{position:fixed;inset:0;z-index:60;display:none;background:rgba(16,32,28,.55);backdrop-filter:blur(3px);padding:24px;overflow:auto}
+  .modal.open{display:block;animation:rev .2s ease}
+  .wa{
+     max-width:520px;margin:2vh auto;border-radius:var(--radius);overflow:hidden;background:var(--card);box-shadow:var(--sh-3);border:1px solid var(--border);
+     display:flex;flex-direction:column;max-height:92vh;
+   }
+   .wa-head{background:var(--card);color:var(--fg);padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+   .wa-head .avatar{width:36px;height:36px;border-radius:50%;background:var(--success);display:grid;place-items:center;font-size:16px;color:var(--primary-foreground)}
+   .wa-head b{font-size:var(--fs-sm);display:block;font-weight:500}
+   .wa-head time{font-size:10px;color:var(--muted-fg)}
+   .wa-head .close{margin-left:auto;background:none;border:0;color:var(--fg-soft);font-size:18px;padding:6px;border-radius:calc(var(--radius) - 4px)}
+   .wa-head .close:hover{color:var(--fg);background:var(--accent)}
+   .wa-body{background:var(--bg);padding:16px;overflow:auto}
+  .wa-step{display:none}
+  .wa-step.on{display:block;animation:rev .25s ease}
+  .btn-row{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+  .choice{
+    display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+    border:1px solid var(--line);background:#fff;border-radius:11px;padding:11px 13px;font-size:var(--fs-sm);
+    transition:var(--tr);
+  }
+  .choice:hover{border-color:var(--accent);box-shadow:var(--sh-1)}
+  .choice b{display:block}
+  .choice span{color:var(--muted);font-size:var(--fs-xs)}
+  .choice .r{margin-left:auto;font-size:var(--fs-xs);color:var(--accent);font-weight:700}
+  .step-nav{display:flex;gap:10px;margin-top:16px;align-items:center}
+  .step-nav .back{margin-right:auto}
+  .bar{height:4px;background:linear-gradient(90deg,var(--success) var(--p,10%),var(--line) var(--p,10%));border-radius:2px}
+
+  .toast{
+     position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(16px);z-index:80;
+     background:var(--fg);color:var(--card);padding:12px 18px;border-radius:calc(var(--radius) - 2px);font-size:var(--fs-sm);
+     box-shadow:var(--sh-3);opacity:0;pointer-events:none;transition:.25s;max-width:86vw;border:1px solid var(--border);
+   }
+   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .note{font-size:var(--fs-xs);color:var(--muted);font-style:italic}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= TOP BAR ================= -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">F</div>
+    <div class="brand-name">Fisiocenter
+      <small>Prototipo · especificación preliminar</small>
+    </div>
+  </div>
+
+  <label class="top-search" aria-label="Buscar">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="search" placeholder="Buscar paciente, cita o material…">
+  </label>
+
+  <nav class="tabs" aria-label="Contextos del prototipo">
+    <button class="tab" data-tab="flow" aria-current="true">Flujo</button>
+    <button class="tab" data-tab="client">Sitio cliente</button>
+    <button class="tab" data-tab="admin">Panel admin</button>
+  </nav>
+
+  <div class="top-actions">
+    <button class="top-icon" title="Notificaciones" aria-label="Notificaciones">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
+      <span class="dot-badge"></span>
+    </button>
+    <button class="role-chip" id="roleBtn" title="Cambiar rol de demostración">
+      <span class="avatar-sm">AT</span>
+      <b>Administrador</b>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= PÁGINA FLUJO ================= -->
+<section class="page sheet" id="p-flow" aria-hidden="false">
+  <div class="eyebrow">Especificación preliminar</div>
+  <h1 class="h1">Plataforma web para el centro de fisioterapia</h1>
+  <p class="lead">
+    Propuesta que centraliza los procesos que hoy se hacen de forma manual (reservas, historial, cobros, ejercicios).
+    Este prototipo recorre el <b>viaje del cliente</b> de punta a punta y las <b>ocho vistas</b> del panel administrativo.
+  </p>
+
+  <div class="flow-grid" style="margin-top:28px">
+    <!-- Mapa de flujo -->
+    <div class="diagram">
+      <h3>Mapa del flujo</h3>
+      <p class="sub">Camino del cliente · camino administrativo</p>
+      <div class="flow-lanes">
+        <div class="flow-col">
+          <div class="lane-label">Cliente</div>
+          <div class="f-node"><span class="dot cli">1</span><div><b>Landing page</b><span class="d">Información del centro · redes · contador de visitas</span></div></div>
+          <div class="f-link"></div>
+          <div class="f-node"><span class="dot cli">2</span><div><b>Chatbot de WhatsApp</b><span class="d">Atención y confirmación de disponibilidad</span></div></div>
+          <div class="f-link"></div>
+          <div class="f-node"><span class="dot cli">3</span><div><b>Reserva</b><span class="d">Servicio, día y hora elegidos por chat</span></div></div>
+          <div class="f-link"></div>
+          <div class="f-node"><span class="dot cli">4</span><div><b>Código QR de pago</b><span class="d">Pago de la consulta al confirmar</span></div></div>
+          <div class="f-link"></div>
+          <div class="f-node"><span class="dot cli">5</span><div><b>Info de la cita y ejercicios</b><span class="d">Recordatorio + rutina indicada por el profesional</span></div></div>
+        </div>
+        <div class="flow-col">
+          <div class="lane-label">Plataforma administrativa</div>
+          <div class="f-node"><span class="dot adm">A</span><div><b>Dashboard</b><span class="d">Visitas, citas de hoy, pagos pendientes</span></div></div>
+          <div class="f-link"></div>
+          <div class="f-node"><span class="dot adm">B</span><div><b>Clientes · Perfil</b><span class="d">Ficha, historial y evolución</span></div></div>
+          <div class="f-link"></div>
+          <div class="f-node"><span class="dot adm">C</span><div><b>Citas · Calendario</b><span class="d">Semana, asignación de profesionales</span></div></div>
+          <div class="f-link"></div>
+          <div class="f-node"><span class="dot adm">D</span><div><b>Pagos · Biblioteca · Chatbot</b><span class="d">Registrar cobros, ejercicios y conversaciones</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auditoría -->
+    <div>
+      <div class="eyebrow">Auditoría del documento</div>
+      <h2 class="h2">Mejoras al flujo propuesto</h2>
+      <p class="lead" style="font-size:1rem;color:var(--ink-soft)">
+        El boceto original no cubre todos los procesos que sí declara como problema. Estos puntos sugieren completar el alcance.
+      </p>
+      <div class="audit" style="margin-top:16px">
+        <div class="card audit-item"><span class="sev high">Alta</span><div>
+          <h4>Falta el módulo de <b>Pagos / cobros</b></h4>
+          <p>El documento dice que hoy los cobros son semanales y no se registran, pero ninguna de las 8 vistas administra pagos ni confirma el pago QR.</p>
+          <div class="fix"><b>Propuesta:</b> vista “Pagos” con estado de cada consulta (pendiente / pagado) y conciliación del QR.</div>
+        </div></div>
+        <div class="card audit-item"><span class="sev high">Alta</span><div>
+          <h4>Faltan <b>fichas de evolución</b> del paciente</h4>
+          <p>Se declara que no existen fichas de evolución, pero no hay vista para registrarlas ni seguirlas.</p>
+          <div class="fix"><b>Propuesta:</b> asociar fichas clínicas al perfil del cliente (en el prototipo se muestra en el perfil).</div>
+        </div></div>
+        <div class="card audit-item"><span class="sev medium">Media</span><div>
+          <h4>El cliente no puede <b>modificar su cita</b></h4>
+          <p>Los requerimientos piden “modificar la fecha de consultas”, pero el flujo del cliente solo cubre reserva y pago; no hay acceso ni perfil del cliente en el sistema.</p>
+          <div class="fix"><b>Propuesta:</b> perfil de cliente con acceso por WhatsApp/contraseña para reprogramar o cancelar.</div>
+        </div></div>
+        <div class="card audit-item"><span class="sev medium">Media</span><div>
+          <h4>Días de atención imprecisos</h4>
+          <p>El boceto lista Lunes a Viernes y Domingo, omitiendo el Sábado.</p>
+          <div class="fix"><b>Propuesta:</b> confirmar el calendario laboral; en el prototipo se marca Sábado como “cerrado” hasta verificarlo.</div>
+        </div></div>
+        <div class="card audit-item"><span class="sev low">Baja</span><div>
+          <h4>Roles sin permisos definidos</h4>
+          <p>Administrador, Empleado y Cliente existen, pero no se especifica qué puede ver o hacer cada uno.</p>
+          <div class="fix"><b>Propuesta:</b> matriz de permisos por módulo; el prototipo incluye un selector de rol para validarla.</div>
+        </div></div>
+        <div class="card audit-item"><span class="sev low">Baja</span><div>
+          <h4>Faltan recordatorios y notificaciones</h4>
+          <p>“Recibe información de la cita” no define avisos automáticos antes de la consulta.</p>
+          <div class="fix"><b>Propuesta:</b> recordatorio automático por WhatsApp 24 h antes.</div>
+        </div></div>
+      </div>
+      <div class="note" style="margin-top:14px">
+        <span class="demo-tag">Demo</span> Nombres, agendas y cifras son datos de ejemplo para navegar el prototipo.
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:34px">
+    <button class="btn btn-primary" data-tab="client" data-goto>Ver el sitio del cliente →</button>
+    <button class="btn btn-ghost" data-tab="admin" data-goto>Entrar al panel administrativo</button>
+  </div>
+</section>
+
+<!-- ================= SITIO CLIENTE ================= -->
+<section class="page sheet" id="p-client" aria-hidden="true">
+  <div class="eyebrow">Sitio público · cliente</div>
+  <div class="site" style="margin-top:14px">
+    <nav class="site-nav">
+      <div class="brand-name" style="display:flex;align-items:center;gap:10px"><span class="brand-mark" style="width:30px;height:30px;font-size:13px">F</span> <b>Fisiocenter</b></div>
+      <div class="links"><a href="#">Inicio</a><a href="#">Servicios</a><a href="#">Equipo</a><a href="#">Contacto</a></div>
+      <span class="demo-tag">ejemplo</span>
+    </nav>
+
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Centro de fisioterapia y rehabilitación</div>
+        <h1 class="h1">Recuperá tu movimiento con un plan que te acompaña</h1>
+        <p class="lead">Valoración inicial, tratamiento personalizado y ejercicios que podés repasar desde tu teléfono. Reservá tu consulta por WhatsApp.</p>
+        <button class="btn btn-primary" id="openWaBtn" style="margin-top:8px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.4 14.1c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.2.2-1.8-.1-.3-.1-.8-.2-1.3-.4-2.4-1-4-3.5-4.1-3.7-.1-.2-1-1.3-1-2.5s.6-1.8.8-2c.2-.2.5-.3.6-.3h.4c.1 0 .3-.1.4.3l.6 1.5c.1.2.1.3 0 .5l-.2.4-.3.4c-.1.1-.2.3-.1.5.1.2.6 1 1.3 1.6.9.8 1.6 1.1 1.9 1.2.2.1.4.1.5-.1.2-.2.7-.8.9-1.1.2-.3.4-.2.6-.1l1.6.8c.2.1.4.2.4.3.1.2.1.7-.1 1.4z"/></svg>
+          Reservar por WhatsApp
+        </button>
+        <div class="views-badge" title="Contador de visitas de la landing">
+          <span aria-hidden="true">👁</span> Esta página tiene <b id="landingViews">0</b> visitas registradas
+        </div>
+        <div class="stats">
+          <div class="stat-item"><b class="stat b" style="font-family:var(--serif);font-size:1.5rem">2.400+</b><span class="stat span" style="color:var(--muted);font-size:var(--fs-xs)">consultas atendidas</span></div>
+          <div class="stat-item"><b class="stat b" style="font-family:var(--serif);font-size:1.5rem">97%</b><span class="stat span" style="color:var(--muted);font-size:var(--fs-xs)">pacientes satisfechos</span></div>
+          <div class="stat-item"><b class="stat b" style="font-family:var(--serif);font-size:1.5rem">3</b><span class="stat span" style="color:var(--muted);font-size:var(--fs-xs)">especialistas en el centro</span></div>
+        </div>
+        <div class="note" style="margin-top:14px"><span class="demo-tag">Demo</span> Métricas ilustrativas — reemplazar por datos reales del centro.</div>
+      </div>
+      <div class="hero-card">
+        <div class="row"><span class="dot"></span><span style="font-size:12px;letter-spacing:.08em;text-transform:uppercase">Ficha de tu sesión</span><span style="margin-left:auto" class="demo-tag" style="background:rgba(255,255,255,.15);color:#BFF0E2">demo</span></div>
+        <div class="session">
+          <div style="display:flex;justify-content:space-between;gap:8px">
+             <div><b style="font-size:var(--fs-sm)">Progreso de movilidad</b><span style="font-size:var(--fs-xs);opacity:.75">Rehabilitación de hombro — mes 2</span></div>
+             <b style="font-size:1.5rem;color:#ccfbf1;font-weight:600">62%</b>
+          </div>
+          <div class="bar"><i></i></div>
+          <div class="tags"><span>Fisioterapia</span><span>Ejercicios en casa</span><span>Próxima sesión: mar 9:00</span></div>
+        </div>
+        <div class="row" style="margin:16px 0 0;align-items:center;gap:10px">
+           <span style="font-size:11px;opacity:.75">Próximo pago: pendiente</span>
+          <span class="qr-pay" style="font-size:11px">Código QR enviado ✓</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="services">
+      <div class="card service"><div class="num">01</div><h3 style="margin:6px 0 4px;font-size:1.05rem">Fisioterapia</h3><p style="margin:0;font-size:var(--fs-sm);color:var(--ink-soft)">Tratamiento de lesiones y dolores musculares con sesiones programadas.</p></div>
+      <div class="card service"><div class="num">02</div><h3 style="margin:6px 0 4px;font-size:1.05rem">Rehabilitación</h3><p style="margin:0;font-size:var(--fs-sm);color:var(--ink-soft)">Planes de recuperación post-operatoria con seguimiento de evolución.</p></div>
+      <div class="card service"><div class="num">03</div><h3 style="margin:6px 0 4px;font-size:1.05rem">Terapia manual</h3><p style="margin:0;font-size:var(--fs-sm);color:var(--ink-soft)">Tratamientos guiados con ejercicios que podés repasar por WhatsApp.</p></div>
+    </div>
+
+    <div class="socials">
+       <span>Redes sociales del centro</span>
+       <a class="soc" href="#" aria-label="Instagram">IG</a>
+       <a class="soc" href="#" aria-label="Facebook">FB</a>
+       <a class="soc" href="#" aria-label="WhatsApp">WA</a>
+     </div>
+  </div>
+</section>
+
+<!-- ================= PANEL ADMIN ================= -->
+<section class="page sheet" id="p-admin" aria-hidden="true">
+  <div class="admin">
+    <aside class="side" aria-label="Menú del panel">
+       <div class="side-brand">
+         <span class="side-logo">
+           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></svg>
+         </span>
+         <span class="side-brand-txt"><b>Fisiocenter</b><small>Panel administrativo</small></span>
+       </div>
+       <div class="sec">Principal</div>
+       <button class="nav-item" data-nav="dashboard" aria-current="true">
+         <svg class="nav-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+         Inicio
+       </button>
+       <button class="nav-item" data-nav="clientes">
+         <svg class="nav-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+         Clientes <span class="cnt">4</span>
+       </button>
+       <button class="nav-item" data-nav="empleados">
+         <svg class="nav-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/></svg>
+         Empleados
+       </button>
+       <button class="nav-item" data-nav="citas">
+         <svg class="nav-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg>
+         Citas
+       </button>
+       <div class="sec">Recursos</div>
+       <button class="nav-item" data-nav="biblioteca">
+         <svg class="nav-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>
+         Biblioteca
+       </button>
+       <button class="nav-item" data-nav="chatbot">
+         <svg class="nav-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+         Chatbot
+       </button>
+       <div class="sec">Finanzas</div>
+       <button class="nav-item" data-nav="pagos">
+         <svg class="nav-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+         Pagos <span class="cnt" style="background:var(--amber-wash);color:var(--amber)">2 pte</span>
+       </button>
+
+       <div class="side-foot">
+         <span class="avatar-sm">AT</span>
+         <span class="side-foot-txt"><b>Ana Torres</b><small>Administradora</small></span>
+         <button class="side-gear" title="Ajustes" aria-label="Ajustes">
+           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+         </button>
+       </div>
+     </aside>
+
+    <div class="main">
+      <!-- ============ VISTA 1 · DASHBOARD ============ -->
+      <div class="view" id="view-dashboard">
+        <div class="main-head">
+          <div class="t">
+            <div class="eyebrow">Vista 1 · Panel principal</div>
+            <h2>Inicio</h2>
+            <div class="sub">Resumen general de la plataforma</div>
+          </div>
+          <span class="demo-tag">datos de ejemplo</span>
+        </div>
+        <div class="stat-grid">
+           <div class="card stat"><span class="ic">👁</span><div class="lbl">Visitas a la landing</div><div class="val" id="dashViews">0</div><div class="d">Contador objetivo del requerimiento</div></div>
+           <div class="card stat"><span class="ic">💰</span><div class="lbl">Pagos pendientes</div><div class="val">2</div><div class="d">Consultas reservadas sin confirmar pago</div></div>
+           <div class="card stat"><span class="ic">📅</span><div class="lbl">Citas hoy</div><div class="val">4</div><div class="d">Según el calendario semanal</div></div>
+           <div class="card stat"><span class="ic">⚠</span><div class="lbl">Sin historial de evolución</div><div class="val">3</div><div class="d">Clientes activos sin ficha (pendiente)</div></div>
+        </div>
+        <div class="panel card">
+          <div class="panel-head"><h3>Citas de hoy</h3><span class="spacer"></span><span class="note">Fuente: calendario semanal</span></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Hora</th><th>Paciente</th><th>Servicio</th><th>Estado de pago</th></tr></thead>
+            <tbody>
+              <tr><td>08:00</td><td><div class="cell-user"><span class="avatar">JP</span><div><b>Juan Pérez</b><span>WhatsApp</span></div></div></td><td>Fisioterapia</td><td><span class="pill ok">Pagado ✓</span></td></tr>
+              <tr><td>09:00</td><td><div class="cell-user"><span class="avatar" style="background:#0E7C66">LG</span><div><b>Lisa Gómez</b><span>WhatsApp</span></div></div></td><td>Rehabilitación</td><td><span class="pill ok">Pagado ✓</span></td></tr>
+              <tr><td>15:00</td><td><div class="cell-user"><span class="avatar" style="background:#3E7CB1">MR</span><div><b>María Rodríguez</b><span>WhatsApp</span></div></div></td><td>Terapia manual</td><td><span class="pill warn">Pago pendiente</span></td></tr>
+              <tr><td>19:00</td><td><div class="cell-user"><span class="avatar" style="background:#B05810">CM</span><div><b>Carlos Medina</b><span>WhatsApp</span></div></div></td><td>Fisioterapia</td><td><span class="pill warn">Pago pendiente</span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <div class="panel card">
+          <div class="panel-head"><h3>Reservas recientes</h3><span class="spacer"></span><span class="note">Canal: chatbot de WhatsApp</span></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Paciente</th><th>Fecha</th><th>Canal</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td><div class="cell-user"><span class="avatar">DP</span><div><b>Daniel Peña</b></div></div></td><td>Martes 10:00</td><td>Chatbot</td><td><span class="pill ok">Confirmada · QR enviado</span></td></tr>
+              <tr><td><div class="cell-user"><span class="avatar">MR</span><div><b>María Rodríguez</b></div></div></td><td>Martes 15:00</td><td>Chatbot</td><td><span class="pill warn">Reservada · sin pagar</span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ============ VISTA 2 · CLIENTES ============ -->
+      <div class="view" id="view-clientes" hidden>
+        <div class="main-head">
+          <div class="t">
+            <div class="eyebrow">Vista 2 · Gestión</div>
+            <h2>Clientes</h2>
+            <div class="sub">Listado y gestión de pacientes</div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-ghost">Buscar</button>
+            <button class="btn btn-primary" data-toast="Demo: formulario de alta de cliente">Añadir</button>
+          </div>
+        </div>
+        <div class="panel card">
+          <div class="panel-head"><h3>Pacientes</h3><span class="spacer"></span><span class="note">Seleccioná una fila para ver el perfil (vista 3)</span></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Cliente</th><th>Teléfono</th><th>Última consulta</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr class="clickable" data-perfil="Juan Pérez"><td><div class="cell-user"><span class="avatar">JP</span><b>Juan Pérez</b></div></td><td>+549 11 2345 9087</td><td>12 sep</td><td><span class="pill ok">Activo</span></td></tr>
+              <tr class="clickable" data-perfil="Lisa Gómez"><td><div class="cell-user"><span class="avatar" style="background:#0E7C66">LG</span><b>Lisa Gómez</b></div></td><td>+549 11 6654 1123</td><td>10 sep</td><td><span class="pill ok">Activo</span></td></tr>
+              <tr class="clickable" data-perfil="María Rodríguez"><td><div class="cell-user"><span class="avatar" style="background:#3E7CB1">MR</span><b>María Rodríguez</b></div></td><td>+549 11 9012 4458</td><td>05 sep</td><td><span class="pill warn">Pago pendiente</span></td></tr>
+              <tr class="clickable" data-perfil="Carlos Medina"><td><div class="cell-user"><span class="avatar" style="background:#B05810">CM</span><b>Carlos Medina</b></div></td><td>+549 11 3344 2271</td><td>02 sep</td><td><span class="pill neu">Inactivo</span></td></tr>
+            </tbody>
+          </table></div>
+          <div class="pager">Mostrando <b>1 – 10</b> de 12 registros
+            <div class="dots"><i class="on">1</i><i>2</i></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ VISTA 3 · PERFIL ============ -->
+      <div class="view" id="view-perfil" hidden>
+        <div class="main-head">
+          <div class="t">
+            <div class="eyebrow">Vista 3 · Perfil del cliente</div>
+            <h2 id="perfilName">Perfil</h2>
+            <div class="sub">Información clínica, pagos y evolución</div>
+          </div>
+          <button class="btn btn-ghost" data-back="clientes">← Volver al listado</button>
+        </div>
+        <div class="panel card">
+          <div class="profile-head">
+            <span class="avatar">JP</span>
+            <div style="flex:1"><h3 id="perfilName2">Juan Pérez</h3><span class="muted" style="font-size:var(--fs-sm)">+549 11 2345 9087 · juan.perez@correo.com</span></div>
+            <span class="pill ok">Activo</span>
+            <span class="demo-tag">demo</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="two-cols">
+          <div class="panel card">
+            <div class="panel-head"><h3>Historial de consultas</h3></div>
+            <div class="timeline">
+              <div class="tl-item"><span class="pt"></span><div><b>Fisioterapia de hombro</b><span>15 sep · 9:00 · Prof. Ana Torres</span></div></div>
+              <div class="tl-item"><span class="pt"></span><div><b>Terapia manual</b><span>20 ago · 11:00 · Prof. Marcos Silva</span></div></div>
+              <div class="tl-item"><span class="pt"></span><div><b>Valoración inicial</b><span>12 ago · 8:00 · Prof. Ana Torres</span></div></div>
+            </div>
+            <div class="note" style="margin-top:10px"><span class="demo-tag">demo</span> Historial a completar con datos clínicos reales.</div>
+          </div>
+          <div class="panel card">
+            <div class="panel-head"><h3>Fichas de evolución</h3><span class="spacer"></span><button class="btn btn-ghost" style="padding:6px 12px;font-size:var(--fs-xs)" data-toast="Demo: apertura de ficha de evolución">Nueva ficha</button></div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="border:1px dashed var(--line-strong);border-radius:10px;padding:12px;font-size:var(--fs-sm)">
+                <b>Ficha #1 — Movilidad</b><br>
+                <span class="muted" style="font-size:var(--fs-xs)">Rango articular 58% → 62% · 08 sep</span>
+              </div>
+              <div class="muted" style="font-size:var(--fs-sm)">Ficha #2 — pendiente de registro</div>
+            </div>
+            <div class="note" style="margin-top:10px">Este módulo no existía en el boceto. <b>Se agrega por auditoría.</b></div>
+          </div>
+        </div>
+        <div class="panel card" style="margin-top:16px">
+          <div class="panel-head"><h3>Pagos de consultas</h3><span class="spacer"></span><span class="pill warn">1 pendiente</span></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Concepto</th><th>Fecha</th><th>Monto</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td>Terapia manual</td><td>20 ago</td><td>$12.000</td><td><span class="pill ok">Pagado</span></td></tr>
+              <tr><td>Fisioterapia</td><td>15 sep</td><td>$12.000</td><td><span class="pill warn">Pendiente · QR enviado</span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ============ VISTA 4 · EMPLEADOS ============ -->
+      <div class="view" id="view-empleados" hidden>
+        <div class="main-head">
+          <div class="t">
+            <div class="eyebrow">Vista 4 · Gestión</div>
+            <h2>Empleados</h2>
+            <div class="sub">Profesionales y horarios de atención</div>
+          </div>
+          <button class="btn btn-primary" data-toast="Demo: formulario de alta de empleado">Añadir</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
+          <div class="card panel">
+            <div class="profile-head"><span class="avatar">AT</span><div><h3 style="font-size:1.05rem;font-family:var(--sans)">Prof. Ana Torres</h3><span class="muted" style="font-size:var(--fs-xs)">Fisioterapia</span></div></div>
+            <div style="display:grid;gap:8px;margin-top:12px;font-size:var(--fs-sm)">
+              <div><b>Turno:</b> Lun – Vie · 8:00 / 16:00</div>
+              <div><b>Citas hoy:</b> 2</div>
+              <div><b>Pacientes:</b> 8</div>
+            </div>
+          </div>
+          <div class="card panel">
+            <div class="profile-head"><span class="avatar" style="background:#3E7CB1">MS</span><div><h3 style="font-size:1.05rem;font-family:var(--sans)">Lic. Marcos Silva</h3><span class="muted" style="font-size:var(--fs-xs)">Terapia manual</span></div></div>
+            <div style="display:grid;gap:8px;margin-top:12px;font-size:var(--fs-sm)">
+              <div><b>Turno:</b> Lun – Vie · 9:00 / 17:00</div>
+              <div><b>Citas hoy:</b> 1</div>
+              <div><b>Pacientes:</b> 6</div>
+            </div>
+          </div>
+          <div class="card panel">
+            <div class="profile-head"><span class="avatar" style="background:#B05810">LR</span><div><h3 style="font-size:1.05rem;font-family:var(--sans)">Lic. Lucía Ruiz</h3><span class="muted" style="font-size:var(--fs-xs)">Rehabilitación</span></div></div>
+            <div style="display:grid;gap:8px;margin-top:12px;font-size:var(--fs-sm)">
+              <div><b>Turno:</b> Mar – Vie · 14:00 / 21:00</div>
+              <div><b>Citas hoy:</b> 1</div>
+              <div><b>Pacientes:</b> 4</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ VISTA 5 · CITAS ============ -->
+      <div class="view" id="view-citas" hidden>
+        <div class="main-head">
+          <div class="t">
+            <div class="eyebrow">Vista 5 · Agenda</div>
+            <h2>Calendario de citas</h2>
+            <div class="sub">Semana actual · vista semanal</div>
+          </div>
+          <button class="btn btn-primary" data-toast="Demo: se abre el formulario de nueva cita">Añadir</button>
+        </div>
+        <div class="cal">
+          <div class="cal-row cal-head">
+            <span style="grid-column:1"></span>
+            <div><b>Lunes</b><span>12 sep</span></div>
+            <div><b>Martes</b><span>13 sep</span></div>
+            <div><b>Miércoles</b><span>14 sep</span></div>
+            <div><b>Jueves</b><span>15 sep</span></div>
+            <div><b>Viernes</b><span>16 sep</span></div>
+            <div><b>Sábado</b><span>17 sep</span></div>
+            <div><b>Domingo</b><span>18 sep</span></div>
+          </div>
+          <div class="cal-row">
+            <div class="cal-time">08:00</div>
+            <div class="cal-cell"><div class="apt ev-a"><b>Juan</b><time>8:00 a. m.</time></div></div>
+            <div class="cal-cell"><div class="apt ev-b"><b>Daniel P.</b><time>10:00 a. m.</time></div></div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"><div class="cal-closed"><span>Cerrado</span></div></div>
+            <div class="cal-cell"></div>
+          </div>
+          <div class="cal-row">
+            <div class="cal-time">09:00</div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"><div class="apt ev-c"><b>Lisa</b><time>9:00 a. m.</time></div></div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"><div class="cal-closed"><span>Cerrado</span></div></div>
+            <div class="cal-cell"></div>
+          </div>
+          <div class="cal-row">
+            <div class="cal-time">15:00</div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"><div class="apt ev-d"><b>María</b><time>3:00 p. m.</time></div></div>
+            <div class="cal-cell"><div class="apt ev-a"><b>Valoración</b><time>3:30 p. m.</time></div></div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"><div class="cal-closed"><span>Cerrado</span></div></div>
+            <div class="cal-cell"></div>
+          </div>
+          <div class="cal-row">
+            <div class="cal-time">19:00</div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"><div class="apt ev-b"><b>Carlos</b><time>7:00 p. m.</time></div></div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"></div>
+            <div class="cal-cell"><div class="cal-closed"><span>Cerrado</span></div></div>
+            <div class="cal-cell"></div>
+          </div>
+          <div class="cal-row">
+            <div class="cal-time">+</div>
+            <div class="cal-cell"><div class="apt add">+ Añadir</div></div>
+            <div class="cal-cell"><div class="apt add">+ Añadir</div></div>
+            <div class="cal-cell"><div class="apt add">+ Añadir</div></div>
+            <div class="cal-cell"><div class="apt add">+ Añadir</div></div>
+            <div class="cal-cell"><div class="apt add">+ Añadir</div></div>
+            <div class="cal-cell"><div class="cal-closed"><span>Cerrado</span></div></div>
+            <div class="cal-cell"><div class="apt add">+ Añadir</div></div>
+          </div>
+        </div>
+        <div class="uplist">
+          <div class="uplist-head">
+            <h3>Próximas citas</h3>
+            <span class="spacer"></span>
+            <span class="note">Esta semana · 6</span>
+          </div>
+          <div class="up-row ev-a">
+            <span class="av">JD</span>
+            <span class="who"><b>Juan Delgado</b><span>Evaluación inicial · Silla</span></span>
+            <span class="pro">Ana T.</span>
+            <time>08:00</time>
+          </div>
+          <div class="up-row ev-c">
+            <span class="av">LR</span>
+            <span class="who"><b>Lisa Ramírez</b><span>Rehabilitación de rodilla</span></span>
+            <span class="pro">Ana T.</span>
+            <time>09:00</time>
+          </div>
+          <div class="up-row ev-b">
+            <span class="av">DP</span>
+            <span class="who"><b>Daniel Pérez</b><span>Post-quirúrgico · Hombro</span></span>
+            <span class="pro">Marco S.</span>
+            <time>10:00</time>
+          </div>
+          <div class="up-row ev-d">
+            <span class="av">MR</span>
+            <span class="who"><b>María Ruiz</b><span>Valoración funcional</span></span>
+            <span class="pro">Ana T.</span>
+            <time>15:00</time>
+          </div>
+          <div class="up-row ev-b">
+            <span class="av">CG</span>
+            <span class="who"><b>Carlos Gómez</b><span>Control mensual</span></span>
+            <span class="pro">Marco S.</span>
+            <time>19:00</time>
+          </div>
+        </div>
+        <div class="note" style="margin:12px 2px">
+          <span class="demo-tag">Demo</span> Citas de ejemplo del boceto original (Juan 8, Lisa 9, María 15, Carlos 19). El Sábado se marcó “cerrado” hasta confirmar el calendario laboral (ver auditoría).
+        </div>
+      </div>
+
+      <!-- ============ VISTA 6+7 · BIBLIOTECA ============ -->
+      <div class="view" id="view-biblioteca" hidden>
+        <div class="main-head">
+          <div class="t">
+            <div class="eyebrow">Vista 6 · Registro</div>
+            <h2>Biblioteca de ejercicios</h2>
+            <div class="sub">Material enviado a los pacientes</div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-ghost" data-toast="Demo: buscador de material">Buscar</button>
+            <button class="btn btn-primary" id="openBiblioForm">Añadir</button>
+          </div>
+        </div>
+        <div class="panel card">
+          <div class="table-wrap"><table>
+            <thead><tr><th>Material</th><th>Categoría</th><th>Formato</th><th>Enviado por WhatsApp</th></tr></thead>
+            <tbody>
+              <tr class="clickable" data-biblio="Rutina de hombro"><td><b>Rutina de movilidad de hombro</b><div class="muted" style="font-size:var(--fs-xs)">Autoescuela de 6 ejercicios</div></td><td>Rehabilitación</td><td>PDF</td><td>12 veces</td></tr>
+              <tr class="clickable" data-biblio="Ejercicios de rodilla"><td><b>Fortaleza de rodilla · nivel 1</b><div class="muted" style="font-size:var(--fs-xs)">Guía ilustrada</div></td><td>Fisioterapia</td><td>PDF</td><td>9 veces</td></tr>
+              <tr class="clickable" data-biblio="Guía de postura"><td><b>Guía de postura de escritorio</b><div class="muted" style="font-size:var(--fs-xs)">Hábitos de trabajo</div></td><td>Prevención</td><td>PDF</td><td>4 veces</td></tr>
+            </tbody>
+          </table></div>
+          <div class="note" style="padding-top:10px">Selecciona un material para ver su información (vista 7).</div>
+        </div>
+      </div>
+
+      <!-- formulario registro (vista 6) -->
+      <div class="view" id="view-biblio-form" hidden>
+        <div class="main-head">
+          <div class="t">
+            <div class="eyebrow">Vista 6 · Registro de material</div>
+            <h2>Nuevo material</h2>
+            <div class="sub">Ingresar título, categoría y contenido</div>
+          </div>
+          <button class="btn btn-ghost" data-back="biblioteca">← Volver</button>
+        </div>
+        <div class="panel card" style="display:grid;gap:16px;max-width:720px">
+          <div class="field"><label for="fTitulo">Título</label><input class="input" id="fTitulo" placeholder="Nombre del material o rutina"></div>
+          <div class="field"><label for="fCategoria">Categoría / área</label>
+            <select class="select" id="fCategoria"><option>Fisioterapia</option><option>Rehabilitación</option><option>Prevención</option></select>
+          </div>
+          <div class="field"><label for="fContenido">Descripción y ejercicios</label><textarea class="textarea" id="fContenido" placeholder="Detalle del material y su alcance…"></textarea></div>
+          <button class="btn btn-primary" style="justify-self:end" data-toast="Demo: material guardado en la biblioteca">Guardar material</button>
+        </div>
+      </div>
+
+      <!-- detalle (vista 7) -->
+      <div class="view" id="view-biblio-item" hidden>
+        <div class="main-head">
+          <div class="t">
+            <div class="eyebrow">Vista 7 · Información</div>
+            <h2 id="biblioTitle">Material</h2>
+            <div class="sub">Datos ingresados en la vista 6</div>
+          </div>
+          <button class="btn btn-ghost" data-back="biblioteca">← Volver a la biblioteca</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1.15fr .85fr;gap:16px;align-items:start" class="two-cols">
+          <div class="panel card">
+            <div class="doc-body">
+              <div class="pg"></div>
+              <h4>Rutina de movilidad de hombro</h4>
+              <p>Serie de <b>6 ejercicios</b> para mejorar el rango articular y reducir la rigidez. Realizar 2 rondas diarias durante 3 semanas.</p>
+              <ol style="margin:10px 0;padding-left:20px">
+                <li>Elevación frontal con banda — 3 × 12</li>
+                <li>Rotación externa con elástico — 3 × 10</li>
+                <li>Péndulos de Codman — 2 × 10</li>
+                <li>Estiramiento cruzado — 30 seg × 3</li>
+                <li>Movilidad con escoba — 2 × 10</li>
+                <li>Respiración diafragmática al cierre — 2 min</li>
+              </ol>
+              <p class="muted" style="font-size:var(--fs-sm);font-family:var(--sans)">Categoría: Rehabilitación · Formato: PDF · Actualizado: 08 sep</p>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+              <button class="btn btn-primary">Enviar por WhatsApp</button>
+              <button class="btn btn-ghost" data-toast="Demo: se elige un paciente para enviar">Enviar a un paciente</button>
+            </div>
+          </div>
+          <div class="panel card">
+            <div class="panel-head"><h3>Envíos recientes</h3></div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:var(--fs-sm)"><b>Enviado a Juan Pérez</b><div class="muted" style="font-size:var(--fs-xs)">Hoy · PDF · WhatsApp</div></div>
+              <div style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:var(--fs-sm)"><b>Enviado a Lisa Gómez</b><div class="muted" style="font-size:var(--fs-xs)">Ayer · PDF · WhatsApp</div></div>
+            </div>
+            <p class="note" style="margin-top:10px">Hoy el envío era manual; el prototipo mantiene la revisión antes de enviar.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ VISTA 8 · CHATBOT ============ -->
+      <div class="view" id="view-chatbot" hidden>
+        <div class="main-head">
+          <div class="t">
+            <div class="eyebrow">Vista 8 · Administración</div>
+            <h2>Chatbot de WhatsApp</h2>
+            <div class="sub">Conversación modelo y configuración</div>
+          </div>
+          <span class="demo-tag">demo</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:start" class="two-cols">
+          <div class="panel card chat-demo" style="margin:0">
+            <div class="panel-head"><h3>Conversación de ejemplo</h3><span class="wa-toggle"><span></span>WhatsApp conectado</span></div>
+            <div class="bubble bot">¡Hola! Soy el asistente de <b>Fisiocenter</b> 👋 ¿Querés reservar una consulta? <time>10:02</time></div>
+            <div class="bubble user">Hola, sí. ¿Tienen turno para esta semana en fisioterapia? <time>10:03</time></div>
+            <div class="bubble bot">¡Claro! Tengo disponibles: <b>Martes 9:00</b>, <b>Miércoles 15:00</b> y <b>Viernes 10:00</b>. ¿Cuál te sirve? <time>10:03</time></div>
+            <div class="bubble user">Martes 9:00 <time>10:04</time></div>
+            <div class="bubble bot">Perfecto ✅ Te reservé el <b>Martes 9:00</b> con la Prof. Ana Torres. Te envío el <b>QR de pago</b> para confirmar. <time>10:04</time></div>
+          </div>
+          <div style="display:grid;gap:16px">
+            <div class="panel card">
+              <div class="panel-head"><h3>Configuración del chatbot</h3></div>
+              <div style="display:grid;gap:12px">
+                <div class="field"><label for="cbMensaje">Mensaje de bienvenida</label><textarea class="textarea" id="cbMensaje" style="min-height:70px">¡Hola! Soy el asistente de Fisiocenter. Te ayudo a reservar, reprogramar o consultar ejercicios.</textarea></div>
+                <div class="field"><label for="cbHorario">Horario de reserva automática</label><select class="select" id="cbHorario"><option>Lun – Vie · 8:00 – 20:00</option></select></div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                  <button class="btn btn-primary" data-toast="Demo: configuraciones guardadas">Guardar</button>
+                  <button class="btn btn-ghost" data-toast="Demo: se abre el programador de respuestas">Programador de respuestas</button>
+                </div>
+              </div>
+            </div>
+            <div class="panel card">
+              <div class="panel-head"><h3>Reservas vía chatbot</h3></div>
+              <div class="stat-grid" style="margin:0;grid-template-columns:1fr 1fr">
+                <div class="stat" style="padding:0;border:0"><div class="lbl">Sesiones hoy</div><div class="val">6</div></div>
+                <div class="stat" style="padding:0;border:0"><div class="lbl">Reservas sin pagar</div><div class="val" style="color:var(--amber)">2</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ VISTA EXTRA · PAGOS (auditoría) ============ -->
+      <div class="view" id="view-pagos" hidden>
+        <div class="main-head">
+          <div class="t">
+            <div class="eyebrow">Sugerida por la auditoría</div>
+            <h2>Pagos y cobros</h2>
+            <div class="sub">Concilia los QRs emitidos · hoy no existía registro formal</div>
+          </div>
+          <span class="demo-tag">propuesta</span>
+        </div>
+        <div class="stat-grid">
+          <div class="card stat"><div class="lbl">Recaudado esta semana</div><div class="val">$36.000</div><div class="d">Ejemplo ilustrativo</div></div>
+          <div class="card stat"><div class="lbl">QR pendientes de pago</div><div class="val" style="color:var(--amber)">2</div><div class="d">María, Carlos</div></div>
+        </div>
+        <div class="panel card">
+          <div class="table-wrap"><table>
+            <thead><tr><th>Paciente</th><th>Concepto</th><th>Monto</th><th>QR</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td><div class="cell-user"><span class="avatar">JP</span><b>Juan Pérez</b></div></td><td>Fisioterapia 15 sep</td><td>$12.000</td><td><span class="pill neu">Emitido</span></td><td><span class="pill ok">Pagado</span></td></tr>
+              <tr><td><div class="cell-user"><span class="avatar" style="background:#3E7CB1">MR</span><b>María Rodríguez</b></div></td><td>Terapia manual 13 sep</td><td>$12.000</td><td><span class="pill neu">Emitido</span></td><td><span class="pill warn">Pendiente</span></td></tr>
+              <tr><td><div class="cell-user"><span class="avatar" style="background:#B05810">CM</span><b>Carlos Medina</b></div></td><td>Fisioterapia 13 sep</td><td>$12.000</td><td><span class="pill neu">Emitido</span></td><td><span class="pill warn">Pendiente</span></td></tr>
+            </tbody>
+          </table></div>
+          <div class="note" style="padding-top:10px">Módulo agregado para cubrir la brecha detectada: cobros semanales manuales sin registro.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ================= MODAL WHATSAPP / RESERVA ================= -->
+<div class="modal" id="waModal" role="dialog" aria-modal="true" aria-labelledby="waTitle">
+  <div class="wa">
+    <div class="wa-head">
+      <span class="avatar">💬</span>
+      <div><b>Fisiocenter · Asistente</b><time>en línea</time></div>
+      <button class="close" id="waClose" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="wa-body" id="waBody">
+      <div class="bar" id="waBar" style="--p:12%"></div>
+      <div class="wa-step on" data-step="0">
+        <div class="bubble bot">¡Hola! Soy el asistente de <b>Fisiocenter</b> 👋<br>Te ayudo a reservar una consulta. ¿Qué servicio necesitás? <time>ahora</time></div>
+        <div class="btn-row">
+          <button class="choice" data-next="1"><div><b>Fisioterapia</b><span>Tratamiento de lesiones y dolor</span></div><span class="r">→</span></button>
+          <button class="choice" data-next="2"><div><b>Rehabilitación</b><span>Recuperación post-operatoria</span></div><span class="r">→</span></button>
+          <button class="choice" data-next="2"><div><b>Terapia manual</b><span>Tratamiento guiado a mano</span></div><span class="r">→</span></button>
+        </div>
+      </div>
+      <div class="wa-step" data-step="1" hidden>
+        <div class="bubble bot">Perfecto. Elegí un día y horario disponible 👇 <time>ahora</time></div>
+        <div class="btn-row">
+          <button class="choice" data-next="3"><b>Martes · 9:00 a. m.</b><span>Cupo disponible</span><span class="r">→</span></button>
+          <button class="choice" data-next="3"><b>Miércoles · 3:00 p. m.</b><span>Cupo disponible</span><span class="r">→</span></button>
+          <button class="choice" data-next="3"><b>Viernes · 10:00 a. m.</b><span>Cupo disponible</span><span class="r">→</span></button>
+        </div>
+      </div>
+      <div class="wa-step" data-step="2" hidden>
+        <div class="bubble bot">Tenés cupo en estos horarios. Elegí uno 👇 <time>ahora</time></div>
+        <div class="btn-row">
+          <button class="choice" data-next="3"><b>Martes · 3:00 p. m.</b><span>Cupo disponible</span><span class="r">→</span></button>
+          <button class="choice" data-next="3"><b>Jueves · 11:00 a. m.</b><span>Cupo disponible</span><span class="r">→</span></button>
+          <button class="choice" data-next="3"><b>Viernes · 9:00 a. m.</b><span>Cupo disponible</span><span class="r">→</span></button>
+        </div>
+      </div>
+      <div class="wa-step" data-step="3" hidden>
+        <div class="bubble bot">¡Listo! <b>Se confirmó tu reserva</b> ✅<br>Para reservarla debés pagarla. Te envío el código QR. <time>ahora</time></div>
+      </div>
+      <div class="wa-step" data-step="4" hidden>
+        <div class="bubble bot">Código QR de pago — consulta de fisioterapia <b>$12.000</b> 💳 <time>ahora</time></div>
+        <div class="qr-wrap" style="margin:12px 0">
+          <div class="qr-box" id="qrBox" aria-label="Código QR de demostración"></div>
+          <div class="qr-caption">
+            <div class="qr-pay" style="display:inline-flex">⌛ Escaneá el QR para pagar</div>
+            <p class="muted" style="font-size:var(--fs-sm)">El pago se refleja automáticamente en el panel administrativo (módulo Pagos).</p>
+            <button class="btn btn-primary" data-next="5">Ya pagué</button>
+          </div>
+        </div>
+      </div>
+      <div class="wa-step" data-step="5" hidden>
+        <div class="bubble bot">¡Pago confirmado! 🎉 Tu cita queda reservada.<br>Te avisaremos el día anterior con un recordatorio. <time>ahora</time></div>
+        <div class="bubble user">¿Me envían la rutina de ejercicios? <time>ahora</time></div>
+        <div class="bubble bot">Sí — el profesional te envía tu rutina en PDF por este mismo chat después de la valoración. <time>ahora</time></div>
+        <div class="bubble bot" style="border:1px dashed var(--line-strong)"><b>Resumen</b><br>Reserva: Martes · 9:00 a. m.<br>Pago: <span style="color:var(--success)">Confirmado</span><br>Recordatorio: 24 h antes por WhatsApp</div>
+        <div class="btn-row" style="margin-top:14px">
+          <button class="btn btn-primary" id="waDone" style="width:100%">Finalizar</button>
+        </div>
+      </div>
+      <div class="step-nav">
+        <button class="btn btn-ghost" id="waBack" style="font-size:var(--fs-xs)" hidden>← Atrás</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(s,c){return (c||document).querySelector(s)},
+      $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+
+  /* ---------- pestañas de contexto ---------- */
+  var tabs=$$(".tab");
+  function setTab(name){
+    tabs.forEach(function(t){t.setAttribute("aria-current",t.getAttribute("data-tab")===name?"true":"false")});
+    $$(".page").forEach(function(p){p.setAttribute("aria-hidden",p.id!=="p-"+name?"true":"false")});
+    if(name==="client"){var v=+sessionStorage.getItem("lv")||0;v++;sessionStorage.setItem("lv",v);$("#landingViews").textContent=v;$("#dashViews").textContent=v;}
+  }
+  tabs.forEach(function(t){t.addEventListener("click",function(){setTab(t.getAttribute("data-tab"))})});
+  $$("[data-goto]").forEach(function(b){b.addEventListener("click",function(){setTab(b.getAttribute("data-tab"))})});
+
+  /* ---------- navegación del panel admin ---------- */
+  var views=$$(".view");
+  function setView(id){
+    views.forEach(function(v){v.hidden=v.id!==("view-"+id)});
+    if(id==="dashboard"){var v=+sessionStorage.getItem("lv")||0;$("#dashViews").textContent=v;}
+    $$(".nav-item").forEach(function(n){n.setAttribute("aria-current",n.getAttribute("data-nav")===id?"true":"false")});
+  }
+  $$(".nav-item").forEach(function(n){n.addEventListener("click",function(){setView(n.getAttribute("data-nav"))})});
+
+  /* perfiles y biblioteca */
+  $$("tr[data-perfil]").forEach(function(tr){
+    tr.addEventListener("click",function(){
+      var n=tr.getAttribute("data-perfil");
+      $("#perfilName").textContent=n;$("#perfilName2").textContent=n;
+      setView("perfil");
+    });
+  });
+  $$("tr[data-biblio]").forEach(function(tr){
+    tr.addEventListener("click",function(){var n=tr.getAttribute("data-biblio");$("#biblioTitle").textContent=n;setView("biblio-item")});
+  });
+  $("#openBiblioForm").addEventListener("click",function(){setView("biblio-form")});
+  $$("[data-back]").forEach(function(b){b.addEventListener("click",function(){setView(b.getAttribute("data-back"))})});
+
+  /* ---------- toast ---------- */
+  var toast=$("#toast"),toTimer;
+  $$("[data-toast]").forEach(function(b){
+    b.addEventListener("click",function(){showToast(b.getAttribute("data-toast"))});
+  });
+  function showToast(msg){
+    toast.textContent="🛠 "+msg;
+    toast.classList.add("show");
+    clearTimeout(toTimer);toTimer=setTimeout(function(){toast.classList.remove("show")},2400);
+  }
+
+  /* ---------- modal WhatsApp ---------- */
+  var modal=$("#waModal"),step=0,
+      steps=$$(".wa-step",$("#waBody")),
+      backBtn=$("#waBack");
+  function go(n){
+    step=n;steps.forEach(function(s){s.classList.toggle("on",s.getAttribute("data-step")==String(n))});
+    $("#waBar").style.setProperty("--p",(12+n*16)+"%");
+    backBtn.hidden=n===0;
+    $("#waBody").scrollTop=9999;
+    if(n===4)drawQR();
+  }
+  $$(".choice").forEach(function(c){c.addEventListener("click",function(){go(+c.getAttribute("data-next"))})});
+  $$("[data-next]").forEach(function(c){if(c.classList.contains("choice"))return;c.addEventListener("click",function(){go(+c.getAttribute("data-next"))})});
+  backBtn.addEventListener("click",function(){go(step-1)});
+  $("#waClose").addEventListener("click",closeModal);
+  $("#waDone").addEventListener("click",closeModal);
+  modal.addEventListener("click",function(e){if(e.target===modal)closeModal()});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&modal.classList.contains("open"))closeModal()});
+  $("#openWaBtn").addEventListener("click",function(){openModal()});
+  function openModal(){modal.classList.add("open");go(0);$("#waClose").focus()}
+  function closeModal(){modal.classList.remove("open")}
+
+  /* ---------- QR de demostración ---------- */
+  function drawQR(){
+    var box=$("#qrBox");box.innerHTML="";
+    var N=21,seed=98213;
+    function rnd(){seed=(seed*9301+49297)%233280;return seed/233280}
+    for(var r=0;r<N;r++){
+      for(var c=0;c<N;c++){
+        var on=false;
+        if(r<7&&c<7||r<7&&c>=N-7||r>=N-7&&c<7){on=isFinder(r,c)}else{on=rnd()>.5}
+        if(on){var i=document.createElement("i");box.appendChild(i)}
+      }
+    }
+    function isFinder(r,c){
+      var rr=r%(N-7)+4,cc=c%7+4;
+      if(rr<7&&cc<7){
+        if(rr>0&&rr<6&&cc>0&&cc<6)return false;
+        if(rr===0||rr===6||cc===0||cc===6)return true;
+        return rr>1&&rr<5&&cc>1&&cc<5;
+      }
+      return false;
+    }
+    box.title="Código QR ilustrativo (demostración)";
+  }
+
+  /* ---------- rol demo ---------- */
+  var roles={Admin:"Administrador",Empleado:"Empleado",Cliente:"Cliente"};
+  var keys=Object.keys(roles),ri=0;
+  var roleAv={Admin:"AT",Empleado:"MS",Cliente:"JP"};
+  $("#roleBtn").addEventListener("click",function(){
+     ri=(ri+1)%keys.length;var k=keys[ri];
+     $("#roleBtn").innerHTML='<span class="avatar-sm">'+roleAv[k]+'</span><b>'+k+'</b>'+
+       '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+     var msgs={Admin:"Sin restricciones: acceso a los 8 módulos + Pagos.",
+               Empleado:"Solo agenda, clientes asignados y biblioteca (sin configuración ni pagos).",
+               Cliente:"No usa el panel: su canal es la landing y el chatbot de WhatsApp."};
+     showToast("Rol "+k+": "+msgs[k]);
+   });
+
+  setTab("flow");
+})();
+</script>
+</body>
+</html>
