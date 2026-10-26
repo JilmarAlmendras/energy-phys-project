@@ -57,10 +57,10 @@ interface Navbar1Props {
 
 const Navbar1 = ({
   logo = {
-    url: "https://www.shadcnblocks.com",
+    url: "/",
     src: "https://cdn.shadcnblocks.com/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
-    alt: "logo",
-    title: "Shadcnblocks.com",
+    alt: "Energy-Phys",
+    title: "Energy-Phys",
   },
   menu = [
     { title: "Home", url: "#" },
@@ -142,7 +142,7 @@ const Navbar1 = ({
 }: Navbar1Props) => {
   return (
     <section className={cn("py-4", className)}>
-      <div className="container">
+      <div className="w-full">
         {/* Desktop Menu */}
         <nav className="hidden items-center justify-between lg:flex">
           <div className="flex items-center gap-6">

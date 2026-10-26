@@ -1,3 +1,6 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -69,6 +72,8 @@ const finanzasItems = [
 ];
 
 export function AppSidebar() {
+  const pathname = usePathname();
+
   return (
     <Sidebar className="border-r border-[#eceef1] bg-white" collapsible="offcanvas">
       <SidebarHeader className="border-b border-[#eceef1] px-4 py-3">
@@ -78,7 +83,7 @@ export function AppSidebar() {
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold leading-tight tracking-tight text-[#0c1420]">
-              Fisiocenter
+              Energy-Phys
             </span>
             <span className="text-[10px] text-[#94a3b8]">
               Panel administrativo
@@ -96,18 +101,17 @@ export function AppSidebar() {
               {principalItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    asChild
+                    render={<a href={item.url} />}
+                    isActive={pathname === item.url}
                     className="h-8 rounded-md px-2 text-sm text-[#475569] transition-colors hover:bg-[#f1f4f7] hover:text-[#0c1420] data-[active=true]:bg-[#eef4fb] data-[active=true]:text-[#285878]"
                   >
-                    <a href={item.url} className="flex items-center gap-2">
-                      <item.icon className="h-4 w-4 text-[#94a3b8]" />
-                      <span className="flex-1">{item.title}</span>
-                      {item.badge && (
-                        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#f1f4f7] px-1.5 text-[10px] font-medium text-[#64748b]">
-                          {item.badge}
-                        </span>
-                      )}
-                    </a>
+                    <item.icon className="h-4 w-4 text-[#94a3b8]" />
+                    <span className="flex-1">{item.title}</span>
+                    {item.badge && (
+                      <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#f1f4f7] px-1.5 text-[10px] font-medium text-[#64748b]">
+                        {item.badge}
+                      </span>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -124,13 +128,12 @@ export function AppSidebar() {
               {recursosItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    asChild
+                    render={<a href={item.url} />}
+                    isActive={pathname === item.url}
                     className="h-8 rounded-md px-2 text-sm text-[#475569] transition-colors hover:bg-[#f1f4f7] hover:text-[#0c1420] data-[active=true]:bg-[#eef4fb] data-[active=true]:text-[#285878]"
                   >
-                    <a href={item.url} className="flex items-center gap-2">
-                      <item.icon className="h-4 w-4 text-[#94a3b8]" />
-                      <span>{item.title}</span>
-                    </a>
+                    <item.icon className="h-4 w-4 text-[#94a3b8]" />
+                    <span>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -147,18 +150,17 @@ export function AppSidebar() {
               {finanzasItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    asChild
+                    render={<a href={item.url} />}
+                    isActive={pathname === item.url}
                     className="h-8 rounded-md px-2 text-sm text-[#475569] transition-colors hover:bg-[#f1f4f7] hover:text-[#0c1420] data-[active=true]:bg-[#eef4fb] data-[active=true]:text-[#285878]"
                   >
-                    <a href={item.url} className="flex items-center gap-2">
-                      <item.icon className="h-4 w-4 text-[#94a3b8]" />
-                      <span className="flex-1">{item.title}</span>
-                      {item.badge && (
-                        <span className="flex h-5 items-center justify-center rounded-full bg-[#fef3c7] px-1.5 text-[10px] font-medium text-[#d97706]">
-                          {item.badge}
-                        </span>
-                      )}
-                    </a>
+                    <item.icon className="h-4 w-4 text-[#94a3b8]" />
+                    <span className="flex-1">{item.title}</span>
+                    {item.badge && (
+                      <span className="flex h-5 items-center justify-center rounded-full bg-[#fef3c7] px-1.5 text-[10px] font-medium text-[#d97706]">
+                        {item.badge}
+                      </span>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
